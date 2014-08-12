@@ -1,9 +1,9 @@
 MorphButton
 ============
 
-MorphButton is a class that makes it easy to animate a morphing button from one state to another.  
+MorphButton makes it easy to create and animate a morphing button.  
 
-<Insert Image of Morph Button GIF here>
+![alt tag](https://raw.githubusercontent.com/VernierSoftwareTechnology/MorphButton/master/MorphButton.gif)
 
 ### Usage
 
