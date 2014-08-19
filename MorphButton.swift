@@ -32,7 +32,7 @@ import UIKit
 
 @IBDesignable class MorphButton : UIControl {
     
-    var animatedImages:[UIImage] = [UIImage]()
+    var animatedImages = [UIImage]()
     var imageContentMode:UIViewContentMode = .Center
         {didSet {self.buttonImageView.contentMode = self.imageContentMode}}
     @IBInspectable var image:UIImage = UIImage()
@@ -43,18 +43,19 @@ import UIKit
         }}
     @IBInspectable var selectedImage:UIImage = UIImage()
     @IBInspectable var animationDuration:Float = 0.3
+    @IBInspectable var highlightedAdjustsImage:Bool = false
     private var buttonImageView =  UIImageView()
     
     override init() {
         super.init()
         self.backgroundColor = UIColor.clearColor()
-        self.setupAnimation()
+        self.setup()
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = UIColor.clearColor()
-        self.setupAnimation()
+        self.setup()
     }
     
     init(image:UIImage, selectedImage:UIImage, animatedImages:[UIImage]) {
@@ -63,15 +64,15 @@ import UIKit
         self.image = image
         self.selectedImage = selectedImage
         self.animatedImages = animatedImages
-        self.setupAnimation()
+        self.setup()
     }
     
-     required init(coder aDecoder: NSCoder!) {
+    required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        self.setupAnimation()
+        self.setup()
     }
     
-    func setupAnimation() {
+    private func setup() {
         self.addSubview(self.buttonImageView)
         self.buttonImageView.frame = self.bounds
         self.buttonImageView.image = self.image
@@ -79,6 +80,39 @@ import UIKit
         self.buttonImageView.animationRepeatCount = 1
         self.buttonImageView.animationDuration = NSTimeInterval(self.animationDuration)
         self.addTarget(self, action: "animate", forControlEvents: .TouchUpInside)
+        self.addTarget(self, action: "adjustImage", forControlEvents: .TouchDown)
+        self.addTarget(self, action: "adjustImage", forControlEvents: .TouchDragEnter)
+        self.addTarget(self, action: "unadjustImage", forControlEvents: .TouchUpInside)
+        self.addTarget(self, action: "unadjustImage", forControlEvents: .TouchDragExit)
+    }
+    
+    private func highlightImage(image: UIImage) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(image.size, false, image.scale)
+        let drawRect = CGRectMake(0, 0, image.size.width, image.size.height)
+        image.drawInRect(drawRect)
+        UIColor(white: 0, alpha: 0.5).set()
+        UIRectFillUsingBlendMode(drawRect, kCGBlendModeSourceAtop)
+        let tintedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return tintedImage
+    }
+    
+    func unadjustImage() {
+        self.highlighted = false
+        if highlightedAdjustsImage {
+            if selected {
+                self.buttonImageView.image = self.selectedImage
+            } else {
+                self.buttonImageView.image = self.image
+            }
+        }
+    }
+    
+    func adjustImage() {
+        self.highlighted = true
+        if highlightedAdjustsImage {
+            self.buttonImageView.image = self.highlightImage(self.buttonImageView.image)
+        }
     }
     
     func animate() {
