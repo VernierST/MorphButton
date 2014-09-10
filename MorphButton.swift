@@ -1,6 +1,6 @@
 //
 //  MorphButton.swift
-//  Video Physics
+//  MorphButton
 //
 //  Created by Ruben Niculcea on 8/6/14.
 //  Copyright (c) 2014 Vernier Software & Technology. All rights reserved.
@@ -111,7 +111,7 @@ import UIKit
     func adjustImage() {
         self.highlighted = true
         if highlightedAdjustsImage {
-            self.buttonImageView.image = self.highlightImage(self.buttonImageView.image)
+            self.buttonImageView.image = self.highlightImage(self.buttonImageView.image!)
         }
     }
     
